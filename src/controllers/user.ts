@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user.js";
 import { NewUserRequestBody } from "../types/type.js";
 import { TryCatch } from "../middlewares/error.js";
+import ErrorHandler from "../utils/utilityClass.js";
+
+// CREATE NEW USER ---------------------------------------------------------------------------------------------
 
 export const newUser = TryCatch(
   async (
@@ -10,8 +13,18 @@ export const newUser = TryCatch(
     next: NextFunction
   ) => {
     const { name, email, photo, gender, _id, dob } = req.body;
+    let user = await User.findById(_id);
 
-    const user = await User.create({
+    if (user)
+      return res.status(200).json({
+        success: true,
+        message: `Welcome back, ${user.name}`,
+      });
+
+    if (!_id || !name || !email || !photo || !gender || !dob)
+      return next(new ErrorHandler("Please add all fields", 400));
+
+    user = await User.create({
       name,
       email,
       photo,
@@ -26,3 +39,45 @@ export const newUser = TryCatch(
     });
   }
 );
+
+// GET ALL USERS -------------------------------------------------------------------------------------------
+
+export const getAllUsers = TryCatch(async (req, res, next) => {
+  const users = await User.find({});
+
+  return res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+// GET USER BY ID -------------------------------------------------------------------------------------------
+
+export const getUser = TryCatch(async (req, res, next) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
+
+  if (!user) return next(new ErrorHandler("Invalid Id", 400));
+
+  return res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+// DELETE USER -----------------------------------------------------------------------------------------------
+
+export const deleteUser = TryCatch(async (req, res, next) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
+
+  if (!user) return next(new ErrorHandler("Invalid Id", 400));
+
+  await user.deleteOne();
+
+  return res.status(200).json({
+    success: true,
+    message: "User Deleted Successfully ",
+  });
+});
+
