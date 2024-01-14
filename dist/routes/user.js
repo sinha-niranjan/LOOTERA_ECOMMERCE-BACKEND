@@ -1,5 +1,6 @@
 import { adminOnly } from "./../middlewares/auth.js";
 import express from "express";
+// CONTROLLERS ----------------------------------------------------------------------------------------------
 import { deleteUser, getAllUsers, getUser, newUser, } from "../controllers/user.js";
 const app = express.Router();
 // route - /api/v1/user/new

@@ -1,5 +1,8 @@
 import { adminOnly } from "./../middlewares/auth.js";
 import express from "express";
+
+// CONTROLLERS ----------------------------------------------------------------------------------------------
+
 import {
   deleteUser,
   getAllUsers,
