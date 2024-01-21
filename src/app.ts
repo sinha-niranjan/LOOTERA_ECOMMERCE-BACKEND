@@ -1,6 +1,7 @@
 import express from "express";
 import { connectDB } from "./utils/features.js";
 import { errorMiddlware } from "./middlewares/error.js";
+import  NodeCache from 'node-cache'
 
 // Importing Routes ---------------------------------------------------------------------------------------------------------------------
 
@@ -12,6 +13,9 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Api is working on /api/v1"));
 const port = 4000;
 connectDB();
+
+export const myCache = new NodeCache();
+
 
 // Using Routes -------------------------------------------------------------------------------------------------------------------------
 
