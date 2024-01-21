@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
-import { invalidateCacheType } from "../types/type.js";
+import { OrderItemType, invalidateCacheType } from "../types/type.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
 
-
-export const connectDB = (uri:string) => {
+export const connectDB = (uri: string) => {
   mongoose
     .connect(uri, { dbName: "Ecommerce_typescript" })
     .then((c) => console.log(`DB connected to ${c.connection.host}`))
@@ -34,5 +33,15 @@ export const invalidateCache = async ({
   }
 
   if (admin) {
+  }
+};
+
+export const reduceStock = async (orderItems: OrderItemType[]) => {
+  for (let i = 0; i < orderItems.length; i++) {
+    const order = orderItems[i];
+    const product = await Product.findById(order.productId);
+    if (!product) throw new Error("Product  not Found !");
+    product.stock -= order.quantity;
+    await product.save();
   }
 };
