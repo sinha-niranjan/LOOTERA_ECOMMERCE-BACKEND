@@ -21,3 +21,12 @@ export type ControllerType = (
   res: Response,
   next: NextFunction
 ) => Promise<void | Response<any, Record<string, any>>>;
+
+
+export type SearchRequestQuery = {
+  search?: string;
+  price?: string;
+  catrgory?: string;
+  sort?: string;
+  page?: string;
+}
