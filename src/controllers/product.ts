@@ -1,9 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import { TryCatch } from "../middlewares/error.js";
-import { NewProductRequestBody, SearchRequestQuery } from "../types/type.js";
+import {
+  BaseQuery,
+  NewProductRequestBody,
+  SearchRequestQuery,
+} from "../types/type.js";
 import { Product } from "../models/product.js";
 import ErrorHandler from "../utils/utilityClass.js";
 import { rm } from "fs";
+// import { faker } from "@faker-js/faker";
 
 // Create new product  -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -140,17 +145,63 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
 
 export const getAllProducts = TryCatch(
   async (req: Request<{}, {}, {}, SearchRequestQuery>, res, next) => {
-    const { search, sort, catrgory, price } = req.query;
+    const { search, sort, category, price } = req.query;
 
     const page = Number(req.query.page) || 1;
 
-    const limit = process.env.PRODUCT_PER_PAGE;
+    const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
 
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    const skip = limit * (page - 1);
 
+    const baseQuery: BaseQuery = {};
+
+    if (search) baseQuery.name = { $regex: search, $options: "i" };
+
+    if (price) baseQuery.price = { $lte: Number(price) };
+
+    if (category) baseQuery.category = category;
+
+    const [products, filteredOnlyProducts] = await Promise.all([
+      Product.find(baseQuery)
+        .sort(sort && { price: sort === "asc" ? 1 : -1 })
+        .skip(skip)
+        .limit(limit),
+      Product.find(baseQuery),
+    ]);
+
+    const totalPage = Math.ceil(filteredOnlyProducts.length / limit);
     return res.status(200).json({
       success: true,
       products,
+      totalPage,
     });
   }
 );
+
+
+// For generate fake products -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// const generateRandomProducts = async (count: number = 10) => {
+//   const products = [];
+
+//   for (let i = 0; i < count; i++) {
+//     const product = {
+//       name: faker.commerce.productName(),
+//       photo: "uploads\\cf7f8f1e-acb0-458d-ba19-1fc3b2635a86.jpeg",
+//       price: faker.commerce.price({ min: 1500, max: 80000, dec: 0 }),
+//       stock: faker.commerce.price({ min: 0, max: 100, dec: 0 }),
+//       category: faker.commerce.department(),
+//       createdAt: new Date(faker.date.past()),
+//       updatedAt: new Date(faker.date.recent()),
+//       __v: 0,
+//     };
+
+//     products.push(product);
+//   }
+
+//   await Product.create(products);
+
+//   console.log({ success: true });
+// };
+
+// generateRandomProducts(40);
