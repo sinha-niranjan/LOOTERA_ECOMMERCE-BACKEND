@@ -72,11 +72,29 @@ export const allOrders = TryCatch(async (req, res, next) => {
   if (myCache.has(`allOrders`))
     orders = JSON.parse(myCache.get(`allOrders`) as string);
   else {
-    orders = await Order.find();
+    orders = await Order.find().populate("user", "name");
     myCache.set(`allOrders`, JSON.stringify(orders));
   }
   return res.status(200).json({
     success: true,
     orders,
+  });
+});
+
+// Get all Order ----------------------------------------------------------------------------------------------------------------------------------
+
+export const getSingleOrder = TryCatch(async (req, res, next) => {
+  const { id } = req.params;
+  let order;
+  if (myCache.has(`order${id}`))
+    order = JSON.parse(myCache.get(`order${id}`) as string);
+  else {
+    order = await Order.findById(id).populate("user", "name");
+    if (!order) return next(new ErrorHandler("Order not Found ", 404));
+    myCache.set(`order${id}`, JSON.stringify(order));
+  }
+  return res.status(200).json({
+    success: true,
+    order,
   });
 });
