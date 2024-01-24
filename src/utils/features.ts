@@ -16,6 +16,7 @@ export const invalidateCache = async ({
   order,
   admin,
   userId,
+  orderId,
 }: invalidateCacheType) => {
   if (product) {
     const productKeys: string[] = [
@@ -32,11 +33,15 @@ export const invalidateCache = async ({
     myCache.del(productKeys);
   }
   if (order) {
-    const ordersKeys: string[] = ["allOrders", `myOrders${userId}`];
+    const ordersKeys: string[] = [
+      "allOrders",
+      `myOrders${userId}`,
+      `order${orderId}`,
+    ];
     const orders = await Order.find({}).select("_id");
 
     orders.forEach((i) => {
-      ordersKeys.push(`order${i._id}`);
+      ordersKeys.push();
     });
 
     myCache.del(ordersKeys);
