@@ -45,6 +45,7 @@ export type invalidateCacheType = {
   product?: boolean;
   order?: boolean;
   admin?: boolean;
+  userId?: string;
 };
 
 export type OrderItemType = {
@@ -60,7 +61,7 @@ export type ShippingInfoType = {
   state: string;
   country: string;
   pinCode: number;
-}
+};
 
 export interface NewOrderRequestBody {
   shippingInfo: ShippingInfoType;
