@@ -136,6 +136,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             userRatio,
             latestTransactions: modifiedLatestTransation,
         };
+        myCache.set("adminStats", JSON.stringify(stats));
     }
     return res.status(200).json({
         success: true,
