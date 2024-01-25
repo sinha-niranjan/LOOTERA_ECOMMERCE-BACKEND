@@ -62,7 +62,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
                 $lte: today,
             },
         });
-        const [thisMonthProducts, thisMonthUsers, thisMonthOrders, lastMonthProducts, lastMonthUsers, lastMonthOrders, productsCount, usersCount, allOrders, lastSixMonthOrders, categories,] = await Promise.all([
+        const [thisMonthProducts, thisMonthUsers, thisMonthOrders, lastMonthProducts, lastMonthUsers, lastMonthOrders, productsCount, usersCount, allOrders, lastSixMonthOrders, categories, femaleUsersCount,] = await Promise.all([
             thisMonthProductsPromise,
             thisMonthUsersPromise,
             thisMonthOrdersPromise,
@@ -74,6 +74,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             Order.find({}).select("total"),
             lastSixMonthOrdersPromise,
             Product.distinct("category"),
+            User.countDocuments({ gender: "female" }),
         ]);
         const thisMonthRevenue = thisMonthOrders.reduce((total, order) => total + (order.total || 0), 0);
         const lastMonthRevenue = lastMonthOrders.reduce((total, order) => total + (order.total || 0), 0);
@@ -108,6 +109,10 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
                 [category]: Math.round((categoriesCount[i] / productsCount) * 100),
             });
         });
+        const userRatio = {
+            male: usersCount - femaleUsersCount,
+            female: femaleUsersCount,
+        };
         stats = {
             categoryCount,
             changePercent,
@@ -116,6 +121,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
                 order: orderMonthCounts,
                 revenue: orderMonthRevenue,
             },
+            userRatio,
         };
     }
     return res.status(200).json({
