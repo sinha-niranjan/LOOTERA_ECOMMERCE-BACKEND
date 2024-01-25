@@ -118,6 +118,13 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             male: usersCount - femaleUsersCount,
             female: femaleUsersCount,
         };
+        const modifiedLatestTransation = latestTransactions.map((i) => ({
+            _id: i._id,
+            discount: i.discount,
+            amount: i.total,
+            quantity: i.orderItems.length,
+            status: i.status,
+        }));
         stats = {
             categoryCount,
             changePercent,
@@ -127,7 +134,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
                 revenue: orderMonthRevenue,
             },
             userRatio,
-            latestTransactions,
+            latestTransactions: modifiedLatestTransation,
         };
     }
     return res.status(200).json({
