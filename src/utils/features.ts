@@ -1,8 +1,10 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import { OrderItemType, invalidateCacheType } from "../types/type.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
 import { Order } from "../models/order.js";
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 export const connectDB = (uri: string) => {
   mongoose
@@ -11,6 +13,7 @@ export const connectDB = (uri: string) => {
     .catch((e) => console.log(e));
 };
 
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 export const invalidateCache = async ({
   product,
   order,
@@ -48,6 +51,8 @@ export const invalidateCache = async ({
   }
 };
 
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 export const reduceStock = async (orderItems: OrderItemType[]) => {
   for (let i = 0; i < orderItems.length; i++) {
     const order = orderItems[i];
@@ -58,13 +63,16 @@ export const reduceStock = async (orderItems: OrderItemType[]) => {
   }
 };
 
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 export const calculatePercentage = (thisMonth: Number, lastMonth: Number) => {
   if (lastMonth === 0) return Number(thisMonth) * 100;
-  const percent =
-    ((Number(thisMonth) - Number(lastMonth)) / Number(lastMonth)) * 100;
+  const percent = (Number(thisMonth) / Number(lastMonth)) * 100;
 
   return Number(percent.toFixed(0));
 };
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 export const getInventories = async ({
   categories,
@@ -88,4 +96,34 @@ export const getInventories = async ({
   });
 
   return categoryCount;
+};
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+interface MyDocument extends Document {
+  createdAt: Date;
+}
+
+type FuncProps = {
+  length: number;
+  docArr: MyDocument[];
+  today: Date;
+}
+
+export const getChartData = ({
+  length,
+  docArr,
+  today,
+}: FuncProps) => {
+  const data:number[] = new Array(length).fill(0);
+
+  docArr.forEach((i) => {
+    const creationDate = i.createdAt;
+    const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+
+    if (monthDiff < length) {
+      data[length - monthDiff - 1] += 1;
+    }
+  });
+
+  return data;
 };
