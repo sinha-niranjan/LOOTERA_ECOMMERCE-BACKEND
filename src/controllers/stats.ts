@@ -150,17 +150,16 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
       order: allOrders.length,
     };
 
-    const orderMonthCounts = new Array(6).fill(0);
-    const orderMonthRevenue = new Array(6).fill(0);
-
-    lastSixMonthOrders.forEach((order) => {
-      const creationDate = order.createdAt;
-      const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
-
-      if (monthDiff < 6) {
-        orderMonthCounts[6 - monthDiff - 1] += 1;
-        orderMonthRevenue[6 - monthDiff - 1] += order.total;
-      }
+    const orderMonthCounts = getChartData({
+      length: 6,
+      today,
+      docArr: lastSixMonthOrders,
+    });
+    const orderMonthRevenue = getChartData({
+      length: 6,
+      today,
+      docArr: lastSixMonthOrders,
+      property: "total",
     });
 
     const categoryCount = await getInventories({
@@ -395,7 +394,7 @@ export const getLineCharts = TryCatch(async (req, res, next) => {
     const [products, users, orders] = await Promise.all([
       Product.find(baseQuery).select("createdAt"),
       User.find(baseQuery).select("createdAt"),
-      Order.find(baseQuery).select(["createdAt","discount","total"]),
+      Order.find(baseQuery).select(["createdAt", "discount", "total"]),
     ]);
 
     const productCounts = getChartData({ length: 12, today, docArr: products });
@@ -417,7 +416,7 @@ export const getLineCharts = TryCatch(async (req, res, next) => {
       users: userCounts,
       products: productCounts,
       discount,
-      revenue ,
+      revenue,
     };
 
     myCache.set(key, JSON.stringify(charts));

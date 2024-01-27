@@ -2,7 +2,6 @@ import mongoose, { Document } from "mongoose";
 import { OrderItemType, invalidateCacheType } from "../types/type.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
- 
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -14,7 +13,7 @@ export const connectDB = (uri: string) => {
 };
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-export const invalidateCache = async ({
+export const invalidateCache =  ({
   product,
   order,
   admin,
@@ -48,6 +47,12 @@ export const invalidateCache = async ({
   }
 
   if (admin) {
+    myCache.del([
+      "adminStats",
+      "adminPieCharts",
+      "adminBarCharts",
+      "adminLineCharts",
+    ]);
   }
 };
 
@@ -125,7 +130,6 @@ export const getChartData = ({
     const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
 
     if (monthDiff < length) {
-      
       data[length - monthDiff - 1] += property ? i[property]! : 1;
     }
   });
