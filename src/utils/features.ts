@@ -2,7 +2,7 @@ import mongoose, { Document } from "mongoose";
 import { OrderItemType, invalidateCacheType } from "../types/type.js";
 import { myCache } from "../app.js";
 import { Product } from "../models/product.js";
-import { Order } from "../models/order.js";
+ 
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -101,27 +101,32 @@ export const getInventories = async ({
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 interface MyDocument extends Document {
   createdAt: Date;
+  discount?: number;
+  total?: number;
 }
 
 type FuncProps = {
   length: number;
   docArr: MyDocument[];
   today: Date;
-}
+  property?: "discount" | "total";
+};
 
 export const getChartData = ({
   length,
   docArr,
   today,
+  property,
 }: FuncProps) => {
-  const data:number[] = new Array(length).fill(0);
+  const data: number[] = new Array(length).fill(0);
 
   docArr.forEach((i) => {
     const creationDate = i.createdAt;
     const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
 
     if (monthDiff < length) {
-      data[length - monthDiff - 1] += 1;
+      
+      data[length - monthDiff - 1] += property ? i[property]! : 1;
     }
   });
 
