@@ -5,7 +5,7 @@ export const errorMiddlware = (err, req, res, next) => {
         err.message = "Invalid ID";
     return res.status(err.statusCode).json({
         success: false,
-        err: err.message,
+        message: err.message,
     });
 };
 export const TryCatch = (func) => {
