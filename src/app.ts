@@ -3,6 +3,7 @@ import { connectDB } from "./utils/features.js";
 import { errorMiddlware } from "./middlewares/error.js";
 import NodeCache from "node-cache";
 import { config } from "dotenv";
+import Stripe from "stripe";
 import morgan from "morgan";
 
 // Importing Routes ---------------------------------------------------------------------------------------------------------------------
@@ -17,15 +18,21 @@ config({
   path: "./.env",
 });
 
+const port = process.env.PORT || 4000;
+const mongoURI = process.env.MONGO_URI || "";
+const stripeKey = process.env.STRIPE_KEY || "";
+
+connectDB(mongoURI);
+
+export const stripe = new Stripe(stripeKey);
+
+export const myCache = new NodeCache();
+
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
-app.get("/", (req, res) => res.send("Api is working on /api/v1"));
-const port = process.env.PORT || 4000;
-const mongoURI = process.env.MONGO_URI || "";
-connectDB(mongoURI);
 
-export const myCache = new NodeCache();
+app.get("/", (req, res) => res.send("Api is working on /api/v1"));
 
 // Using Routes -------------------------------------------------------------------------------------------------------------------------
 
