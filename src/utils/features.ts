@@ -23,7 +23,7 @@ export const invalidateCache =  ({
 }: invalidateCacheType) => {
   if (product) {
     const productKeys: string[] = [
-      "latesProducts",
+      "latestProducts",
       "categories",
       "allProducts",
     ];

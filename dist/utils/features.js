@@ -12,7 +12,7 @@ export const connectDB = (uri) => {
 export const invalidateCache = ({ product, order, admin, userId, orderId, productId, }) => {
     if (product) {
         const productKeys = [
-            "latesProducts",
+            "latestProducts",
             "categories",
             "allProducts",
         ];
