@@ -1,4 +1,4 @@
-import { stripe } from "../app.js";
+import { stripe } from "../index.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Coupon } from "../models/coupon.js";
 import ErrorHandler from "../utils/utilityClass.js";

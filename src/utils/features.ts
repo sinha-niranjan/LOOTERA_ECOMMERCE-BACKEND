@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 import { OrderItemType, invalidateCacheType } from "../types/type.js";
-import { myCache } from "../app.js";
+import { myCache } from "../index.js";
 import { Product } from "../models/product.js";
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ export const connectDB = (uri: string) => {
 };
 
 // -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-export const invalidateCache =  ({
+export const invalidateCache = ({
   product,
   order,
   admin,

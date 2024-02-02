@@ -2,7 +2,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
 import { invalidateCache, reduceStock } from "../utils/features.js";
 import ErrorHandler from "../utils/utilityClass.js";
-import { myCache } from "../app.js";
+import { myCache } from "../index.js";
 // Get my Order ----------------------------------------------------------------------------------------------------------------------------------
 export const myOrders = TryCatch(async (req, res, next) => {
     const { id: user } = req.query;

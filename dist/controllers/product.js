@@ -2,7 +2,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Product } from "../models/product.js";
 import ErrorHandler from "../utils/utilityClass.js";
 import { rm } from "fs";
-import { myCache } from "../app.js";
+import { myCache } from "../index.js";
 import { invalidateCache } from "../utils/features.js";
 // import { faker } from "@faker-js/faker";
 // get latest created products  -------------------------------------------------------------------------------------------------------------------------------------------------

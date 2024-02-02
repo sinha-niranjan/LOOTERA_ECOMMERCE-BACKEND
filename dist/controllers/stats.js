@@ -1,4 +1,4 @@
-import { myCache } from "../app.js";
+import { myCache } from "../index.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
