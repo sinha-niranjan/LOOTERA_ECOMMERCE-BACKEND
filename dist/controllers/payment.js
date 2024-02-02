@@ -4,20 +4,20 @@ import { Coupon } from "../models/coupon.js";
 import ErrorHandler from "../utils/utilityClass.js";
 // Create new Coupon -----------------------------------------------------------------------------------------------------------------------------------------
 export const createPaymentIntent = TryCatch(async (req, res, next) => {
-    const { amount } = req.body;
+    const { amount, shippingInfo, user } = req.body;
     if (!amount)
         return next(new ErrorHandler("Please enter   Amount ", 400));
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Number(amount) * 100,
         currency: "INR",
-        description: "for amazon-clone project",
+        description: "for payment of ordered product ",
         shipping: {
-            name: "Random singh",
+            name: user || "",
             address: {
-                line1: "510 Townsend St",
-                postal_code: "98140",
-                city: "San Francisco",
-                state: "CA",
+                line1: shippingInfo.address,
+                postal_code: shippingInfo.pincode,
+                city: shippingInfo.city,
+                state: shippingInfo.state,
                 country: "US",
             },
         },
