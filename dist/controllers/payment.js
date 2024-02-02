@@ -9,7 +9,18 @@ export const createPaymentIntent = TryCatch(async (req, res, next) => {
         return next(new ErrorHandler("Please enter   Amount ", 400));
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Number(amount) * 100,
-        currency: "inr",
+        currency: "INR",
+        description: "for amazon-clone project",
+        shipping: {
+            name: "Random singh",
+            address: {
+                line1: "510 Townsend St",
+                postal_code: "98140",
+                city: "San Francisco",
+                state: "CA",
+                country: "US",
+            },
+        },
     });
     return res.status(201).json({
         success: true,
